@@ -1,4 +1,11 @@
 version: 0.0
+
 files:
   - source: /
     destination: /var/www/html/libraryApp
+
+hooks:
+  BeforeDeploy:
+    - location: scripts/empty_before_deploy.sh
+      timeout: 60
+      runas: ubuntu

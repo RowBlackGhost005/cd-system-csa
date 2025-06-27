@@ -17,6 +17,7 @@ phases:
       - mkdir -p /tmp/deploy
       - cp -r build/* /tmp/deploy/
       - cp ../appspec.yml /tmp/deploy/
+      - cp -r ../scripts /tmp/deploy/
 
 artifacts:
   files:
