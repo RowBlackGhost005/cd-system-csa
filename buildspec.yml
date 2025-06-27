@@ -18,5 +18,6 @@ phases:
 
 artifacts:
   files:
+    - appspec.yml
     - '**/*'
   base-directory: /tmp/deploy
