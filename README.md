@@ -511,6 +511,22 @@ And here it is the webpage updated with the latest changes we made.
 
 ![Website Updated](doc/images/website-2.png)
 
+# Extra Evidence
+Here is the extra evidence of all other services working in this project.
+
+#### Listing Files inside the EC2 instance after deployment.
+![EC2 Consle Listing Project Files](doc/images/ec2-files.png)
+
+#### Cloudwatch logs of the Pipeline
+![Cloudwatch Logs of Pipeline](doc/images/cloudwatch-logs.png)
+
+#### S3 Bucket containing build files
+![S3 Bucket file list](doc/images/s3-builds.png)
+
+#### CodeBuild logs
+![Cloudwatch build logs](doc/images/build-logs.png)
+
+
 # Summary
 Setting up a Continuos Deployment pipeline might be challening but it will help you deploy faster once setup correctly, this same setup allows for a lot of configuration.
 
