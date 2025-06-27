@@ -4,6 +4,8 @@ In this assigment I setup a Continuous Deployment pipeline using AWS Code Pipeli
 
 This helped me solidify my understanding of CI/CD Workflows and cloud services.
 
+Try it out: http://ec2-3-95-230-122.compute-1.amazonaws.com/
+
 # Requirements
 - AWS Account.
 
@@ -496,3 +498,23 @@ Now lets add another book to the repository and wait for it to be automatically 
 I added the new book like this, and pushed the changes.
 
 ![New book in frontend](doc/images/newbook.png)
+
+And after a few seconds our pipeline gets the changes and starts the deployment.
+
+![Deployment Flow](doc/images/pipeline-process-4.png)
+
+After a while we can see that in fact our changes got deployed, now we go to the EC2 URL to confirm that.
+
+![Deployment Flow Sucess](doc/images/pipeline-process-4-sucess.png)
+
+And here it is the webpage updated with the latest changes we made.
+
+![Website Updated](doc/images/website-2.png)
+
+# Summary
+Setting up a Continuos Deployment pipeline might be challening but it will help you deploy faster once setup correctly, this same setup allows for a lot of configuration.
+
+By developing this kind of projects we get insight as to how to develop and work with cloud services to improve our coding habilities, also we gain experience in the cloud enviroment.
+
+# Credits
+Developed by: Luis Marin
