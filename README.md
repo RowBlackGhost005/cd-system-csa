@@ -194,14 +194,14 @@ Now we need to install SSM Agent in our EC2 machine, this agent is what allows i
 To do so we will be running some commands again in the CLI of the EC2 instance, so we will be needing PuTTY again.
 
 ```BASH
-sudo apt update
-sudo snap install amazon-ssm-agent --classic
+sudo apt install -y ruby-full wget
+wget https://s3.us-east-1.amazonaws.com/amazon-ssm-us-east-1/latest/debian_amd64/amazon-ssm-agent.deb
+sudo dpkg -i amazon-ssm-agent.deb
 sudo systemctl enable amazon-ssm-agent
 sudo systemctl start amazon-ssm-agent
 ```
 
 ```BASH
-sudo apt install -y ruby-full wget
 wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
 chmod +x ./install
 sudo ./install auto
