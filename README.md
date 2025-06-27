@@ -275,12 +275,14 @@ phases:
       - echo "Build completed on `date`"
       - mkdir -p /tmp/deploy
       - cp -r build/* /tmp/deploy/
+      - cp ../appspec.yml /tmp/deploy/
 
 artifacts:
   files:
     - '**/*'
   base-directory: /tmp/deploy
 ```
+*Note: Note that we are referencing an /appspec.yml file, this will be created on steps ahead*
 
 Skimming through this config you can see that, this process will get the files from `/frontend` on our repo and run npm install, to get all dependencies.
 
@@ -320,11 +322,10 @@ Now that we selected DeploySpec file, we need to create this file in our root fo
 Go to your repository and in the `ROOT` folder create a file called `appspec.yml` and paste the following code:
 ```YML
 version: 0.0
-os: linux
+
 files:
   - source: /
     destination: /var/www/html/libraryApp
-    overwrite: true
 ```
 
 This simple command tells the Deploy stage to put the built result in `/var/www/html/libraryApp` (Where NGIGX expects the app to be).
