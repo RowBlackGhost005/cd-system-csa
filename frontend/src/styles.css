@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  color: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
