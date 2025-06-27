@@ -151,6 +151,64 @@ Now if we try to reach our EC2 in our browser we will get a `404 Not Found`, but
 
 ![EC2 404 Error](doc/images/ec2-http-empty.png)
 
+### Create IAM Role for Deployment
+Now we need to grants some permissions to our EC2 instance, so it can work with other systems, this will enable it to let our Deployment Step to deploy into our EC2.
+
+To do this go to `IAM` then `Roles` then `Create Role`
+
+Here select `AWS Service` as the Trusted Entity and then select ECT as `Use Case`
+
+Then click `Next`
+![EC2 Role Setup](doc/images/ec2-role-setup-1.png)
+
+Now we will be attaching two different permissions
+```
+AmazonSSMManagedInstanceCore
+```
+and
+```
+AmazonEC2RoleForAWSCodeDeploy
+```
+
+Search for them and click on their checkbox, then click `Next`
+![EC2 Role Setup](doc/images/ec2-role-setup-2.png)
+
+Now create a name for the new role and review the permissions so all checks up.
+
+Yo should be seeing only TWO permissions added.
+
+If everything checks up click `Create Role`
+![EC2 Role Setup](doc/images/ec2-role-setup-3.png)
+
+Now we will be attaching this role to our EC2.
+
+### Attach Deployment IAM Role to EC2
+Now go back to EC2 Dashboard and select the Instance where we will be deploying, then click on `Actions` then `Security` then `Modify IAM Role`
+
+Here look for the role we just created and select it, now click `Update IAM Role`
+![Attaching IAM Role to EC2](doc/images/ec2-attach-iam-role.png)
+
+### Install SSM Agent
+Now we need to install SSM Agent in our EC2 machine, this agent is what allows inter-service communication, so this allows the Deploy stage to communicate with EC2 to put the changes in it.
+
+To do so we will be running some commands again in the CLI of the EC2 instance, so we will be needing PuTTY again.
+
+```BASH
+sudo apt update
+sudo snap install amazon-ssm-agent --classic
+sudo systemctl enable amazon-ssm-agent
+sudo systemctl start amazon-ssm-agent
+```
+
+```BASH
+sudo apt install -y ruby-full wget
+wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
+chmod +x ./install
+sudo ./install auto
+sudo systemctl enable codedeploy-agent
+sudo systemctl start codedeploy-agent
+```
+
 Now our EC2 is completely ready to host and provide our web app, now we need to add our web app build, this is going to be achieved using our pipeline.
 
 # Setup Code Pipeline
@@ -393,3 +451,5 @@ Create a name for the policy and review that the access level, resources and con
 Now our policy is attached and the pipeline now has the right permissions to create logs of deployment and also access the EC2 to deploy our project.
 
 Now go ahead and make some changes in the repository so the pipeline picks it up and starts the deployment process again.
+
+![Pipeline Flow](doc/images/pipeline-process-2.png)
