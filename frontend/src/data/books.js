@@ -1,5 +1,6 @@
 import Dune from './Dune.jpg';
 import TheSubtleArtOfDontGiveAFck from './The Subtle Art Of Not Giving a Fck.jpg'
+import DuneMessiah from './Dune-Messiah.jpg';
 
 const books = [
   {
@@ -15,6 +16,13 @@ const books = [
     pagesRead: 224,
     totalPages: 224,
     image: TheSubtleArtOfDontGiveAFck
+  },
+  {
+    id: 3,
+    title: "Dune: Messiah",
+    pagesRead: 0,
+    totalPages: 256,
+    image: DuneMessiah
   }
 ];
 

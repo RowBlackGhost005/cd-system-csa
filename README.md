@@ -491,5 +491,8 @@ And if we go to the EC2 instance URL we will be able to see our website.
 ![Website Deployed](doc/images/website-1.png)
 
 # Continuous Deployment
-Now lets add another book to the repository and wait for it to be atuomatically deployed by our pipeline.
+Now lets add another book to the repository and wait for it to be automatically deployed by our pipeline.
 
+I added the new book like this, and pushed the changes.
+
+![New book in frontend](doc/images/newbook.png)
