@@ -15,9 +15,9 @@ phases:
       - echo "Build completed on `date`"
       - mkdir -p /tmp/deploy
       - cp -r build/* /tmp/deploy/
+      - cp ../appspec.yml /tmp/deploy/
 
 artifacts:
   files:
-    - appspec.yml
     - '**/*'
   base-directory: /tmp/deploy
