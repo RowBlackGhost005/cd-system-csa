@@ -111,13 +111,13 @@ Once inside this file we will be editing it to add the following lines:
     index index.html;
 
     location / {
-        try_files $uri /index.html;
+        try_files $uri $uri/ /index.html =404;
     }
 ```
 
 This tells NGIX to look for the index inside the folder we created, then we need to make sure that our Deployment phase copies the build content inside that folder.
 
-*Note that these settings are already in the file, you migh need to look for them.*
+*Note that these settings are already in the file, you might need to look for them.*
 ![NGINX Configuration](doc/images/console-3.png)
 
 Save the file by clicking `CTRL + X` then pressing `Y` and then enter.
@@ -326,11 +326,38 @@ version: 0.0
 files:
   - source: /
     destination: /var/www/html/libraryApp
+
+hooks:
+  BeforeDeploy:
+    - location: scripts/before_deploy
+      timeout: 60
+      runas: ubuntu
 ```
 
 This simple command tells the Deploy stage to put the built result in `/var/www/html/libraryApp` (Where NGIGX expects the app to be).
 
-Make sure to include this file in the repository.
+---
+
+### Bug fix for Deployment
+For some reason, while I developed this project my Deploy phase in the pipeline always failed because it expected a `before-deploy` script, even if we never specified it and I could not got my head around it.
+
+So as a last restort fix I gave the Deploy what it wanted, a 'before-deploy' script, this does nothing more than echoing something in the console, but this way I avoid the error of 'not having a script' that prevented me from deploying the app.
+
+So to implement this fix you already set half of it above (The hooks part wasn't orignally planned).
+
+So now create a folder in the root of the repository called `scripts` and inside of it create a `before_deploy.sh` and put the following inside:
+
+```BASH
+echo "Before Deploy. . ."
+exit 0
+```
+
+Now the deploy phase gets what it 'expects' for some reason and it allow the deployment.
+
+
+---
+
+Make sure to include these files in the repository.
 
 Now in step 7 verify that all our changes are setup properly.
 
@@ -456,3 +483,13 @@ Now go ahead and make some changes in the repository so the pipeline picks it up
 ![Pipeline Flow](doc/images/pipeline-process-2.png)
 
 Now our pipeline works correctly and it has been deployed to our EC2 Instance.
+
+![Pipeline Flow Success](doc/images/pipeline-process-3.png)
+
+And if we go to the EC2 instance URL we will be able to see our website.
+
+![Website Deployed](doc/images/website-1.png)
+
+# Continuous Deployment
+Now lets add another book to the repository and wait for it to be atuomatically deployed by our pipeline.
+
