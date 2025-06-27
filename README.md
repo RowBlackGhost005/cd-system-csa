@@ -240,10 +240,10 @@ This take us back to our step 4, here we see that the build project gets attache
 In this same step, make sure you have `Input Artifact` set as Defined by: Source (Meaning our Repository).
 ![Pipeline step 4-2](doc/images/pipeline-4-2.png)
 
-In the next step we have Test stage, we will be skiping this because we have nothing much to test here, go ahead an click `Skip Test Stage`.
+We will skip step 5, which is the Test stage, because we have nothing much to test here, go ahead an click `Skip Test Stage`.
 ![Pipeline step 5](doc/images/pipeline-5.png)
 
-Now we will be setting up our Deployment stage, due to our current configuration and for simplicity, we will be adding an EC2 instance directly for deployment.
+Now on step 6 we will be setting up our Deployment stage, due to our current configuration and for simplicity, we will be adding an EC2 instance directly for deployment.
 
 Select EC2 as the `Provider`
 
@@ -273,3 +273,123 @@ This simple command tells the Deploy stage to put the built result in `/var/www/
 
 Make sure to include this file in the repository.
 
+Now in step 7 verify that all our changes are setup properly.
+
+At this point, the files we created should be in the remote repository already, because after the creation of the pipeline, it will attempt to run the process.
+
+If everything looks good go ahead and click `Create Pipeline`
+![Pipeline step 7](doc/images/pipeline-7.png)
+
+
+Once created the process is going to start and attempt to deploy automatically.
+![Pipeline flow](doc/images/pipeline-process-1.png)
+
+But it will likely `fail` because of one warning that we got earlier in in step 6 (deploy), it states that we need to `manually grant access` to our pipeline to access, write and delete files in our EC2.
+
+![Pipeline flow failing](doc/images/pipeline-process-1-fail.png)
+
+This is because the direct integration of EC2 delegates the 'deployment' to our pipeline itself, that's why we need to grant him access, so we will be doing this next.
+
+## Granting Access to EC2 to the Pipeline
+Now we will be granting permission to our Pipeline to interact with the EC2 to finish the Deployment process, for this lets go to `IAM` then `Roles`.
+
+Here we will be on the look for the role of our current pipeline, the name should be something like `AWSCodePipelineServiceRole-#Region#-#PipelineName#`
+
+Click on it and then go to `Add Permissions` then select `Create Inline Policy` *(Or you can create a policy and attach it)*
+
+Here we will be adding the following permissions definition:
+
+Note that you will need:
+- Pipeline Name (The complete name of the pipeline)
+- Region Name (Where the EC2 resides)
+- Account ID (Your 12 digits)
+- Target group name (Of the EC2 bucket *[name]*)
+- Target value (Of the EC2 bucket *[#Name#]*)
+
+Remember to delete both [] or {} that surround the placeholders.
+```JSON
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "StatementWithAllResource",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInstances",
+                "elasticloadbalancing:DescribeTargetGroupAttributes",
+                "elasticloadbalancing:DescribeTargetGroups",
+                "elasticloadbalancing:DescribeTargetHealth",
+                "ssm:CancelCommand",
+                "ssm:DescribeInstanceInformation",
+                "ssm:ListCommandInvocations"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "StatementForLogs",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:logs:{{region}}:{{AccountId}}:log-group:/aws/codepipeline/{{pipelineName}}:*"
+            ]
+        },
+        {
+            "Sid": "StatementForElasticloadbalancing",
+            "Effect": "Allow",
+            "Action": [
+                "elasticloadbalancing:DeregisterTargets",
+                "elasticloadbalancing:RegisterTargets"
+            ],
+            "Resource": [
+                "arn:aws:elasticloadbalancing:{{region}}:{{AccountId}}:targetgroup/[[targetGroupName]]/*"
+            ]
+        },
+        {
+            "Sid": "StatementForSsmOnTaggedInstances",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:SendCommand"
+            ],
+            "Resource": [
+                "arn:aws:ec2:{{region}}:{{AccountId}}:instance/*"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "aws:ResourceTag/{{tagKey}}": "{{tagValue}}"
+                }
+            }
+        },
+        {
+            "Sid": "StatementForSsmApprovedDocuments",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:SendCommand"
+            ],
+            "Resource": [
+                "arn:aws:ssm:{{region}}::document/AWS-RunPowerShellScript",
+                "arn:aws:ssm:{{region}}::document/AWS-RunShellScript"
+            ]
+        }
+    ]
+}
+```
+
+Remember that the `Tag Name` is the tag of the EC2 instance, if not set any, the default should be `Name`, and then the `Tag Value` is the `actual name` of the EC2 instance
+
+Once the policy is edited with your data it should look something like this:
+![Policy Edit Page](doc/images/policy-edit.png)
+
+If the editor detects no errors, go ahead and click `Next`
+
+Create a name for the policy and review that the access level, resources and conditions look good, then click on `Create Policy`
+![Policy Review Page](doc/images/policy-review.png)
+
+Now our policy is attached and the pipeline now has the right permissions to create logs of deployment and also access the EC2 to deploy our project.
+
+Now go ahead and make some changes in the repository so the pipeline picks it up and starts the deployment process again.
