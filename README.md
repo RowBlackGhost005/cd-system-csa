@@ -454,3 +454,5 @@ Now our policy is attached and the pipeline now has the right permissions to cre
 Now go ahead and make some changes in the repository so the pipeline picks it up and starts the deployment process again.
 
 ![Pipeline Flow](doc/images/pipeline-process-2.png)
+
+Now our pipeline works correctly and it has been deployed to our EC2 Instance.
