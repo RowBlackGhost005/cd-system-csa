@@ -13,6 +13,7 @@ phases:
   post_build:
     commands:
       - echo "Build completed on `date`"
+      - rm -rf /tmp/deploy 
       - mkdir -p /tmp/deploy
       - cp -r build/* /tmp/deploy/
       - cp ../appspec.yml /tmp/deploy/
