@@ -6,6 +6,6 @@ files:
 
 hooks:
   BeforeDeploy:
-    - location: scripts/empty_before_deploy.sh
+    - location: scripts/before_deploy
       timeout: 60
       runas: ubuntu
